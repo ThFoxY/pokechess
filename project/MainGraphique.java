@@ -3,93 +3,101 @@
 
 import MG2D.Fenetre;
 import MG2D.Couleur;
-import MG2D.geometrie.Rectangle;
-import MG2D.geometrie.Texte;
-import MG2D.geometrie.Texture;
-import MG2D.geometrie.Ligne;
 import MG2D.geometrie.Point;
+import MG2D.geometrie.Ligne;
+import MG2D.geometrie.Carre;
+import MG2D.geometrie.Texture;
 
 import java.util.ArrayList;
-import java.awt.Font;
 
 /**
  * Création de l'interface graphique via MG2D.
  */
 public class MainGraphique {
-// Constants:
-    public static final int SCREEN_SIZE_X = 600;
-    public static final int SCREEN_SIZE_Y = 700;
-    public static final int TOP_HEIGHT = 100;
-    public static final int COLUMN_ROW = 9;
-    public static final int SPACING = 66;
-    public static final int REFRESH_RATE = 16;
-    public static final Font FONT = new Font("Calibri", Font.TYPE1_FONT, 24);
+// Constantes:
+    public static final int TAILLE_CASE = 60;
+    public static final int TAILLE_ECHIQUIER = 9;
+    public static final int TAILLE_ECRAN_X = TAILLE_CASE * 13;
+    public static final int TAILLE_ECRAN_Y = TAILLE_CASE * 9;
 
-// Attributes:
-    public static Fenetre window = new Fenetre("Échecs Pokémon", SCREEN_SIZE_X, SCREEN_SIZE_Y);
-    public static boolean loop = true;
-
-// Methods:
+// Méthodes:
     /**
-     * Initializes the top of grid.
-     * @param color a color for the top.
+     * Création de l'échiquier.
+     * @param fenetre
+     * @param arene
      */
-    public static void initTop(Couleur color) {
-        Rectangle top = new Rectangle(color, new Point(0, SCREEN_SIZE_Y - TOP_HEIGHT), SCREEN_SIZE_X, TOP_HEIGHT, true);
-        window.ajouter(top);
-
-        Texte turn = new Texte(Couleur.BLANC, "Au joueur rouge de jouer", FONT, new Point(top.getLargeur() / 2, top.getHauteur() / 2 + SCREEN_SIZE_Y - TOP_HEIGHT));
-        window.ajouter(turn);
-    }
-
-    /**
-     * Initializes the grid.
-     * @param color a color for the lines.
-     */
-    public static void drawGrid(Couleur color) {
-        for(int i = 0; i < COLUMN_ROW; i++) {
-            Ligne line = new Ligne(color, new Point(i * SPACING, 0), new Point(i * SPACING, SCREEN_SIZE_Y - TOP_HEIGHT));
-            window.ajouter(line);
-        }
-
-        for(int i = 0; i < COLUMN_ROW; i++) {
-            Ligne line = new Ligne(color, new Point(0, i * SPACING), new Point(SCREEN_SIZE_X, i * SPACING));
-            window.ajouter(line);
-        }
-    }
-
-    public static void initArena(Plateau p) {
-        ArrayList<Piece> arena = p.getArena();
-        for (Piece pokemon : arena) {
-            Texture pok = new Texture("images/" + pokemon.getPokemon().getNombre() + ".png", new Point(pokemon.getPosition().getX() * 66, pokemon.getPosition().getY() * 66), SPACING, SPACING);
-            window.ajouter(pok);
-
-            if(pokemon.getPlayer() == 1) {
-                Texte pokPV = new Texte(Couleur.ROUGE, "" + pokemon.getPokemon().getPV() + "", FONT, new Point( (pokemon.getPosition().getX() * 66) + 16, (pokemon.getPosition().getY() * 66) + 16) );
-                window.ajouter(pokPV);
-            }else {
-                Texte pokPV = new Texte(Couleur.VERT, "" + pokemon.getPokemon().getPV() + "", FONT, new Point( (pokemon.getPosition().getX() * 66) + 16, (pokemon.getPosition().getY() * 66) + 16) );
-                window.ajouter(pokPV);
+    public static void echiquier(Fenetre fenetre, Plateau arene) {
+        for (int ligne = 0; ligne < TAILLE_ECHIQUIER; ligne++) {
+            for (int colonne = 0; colonne < TAILLE_ECHIQUIER; colonne++) {
+                if ((ligne + colonne) % 2 == 1)
+                    fenetre.ajouter(
+                        new Carre(Couleur.BLANC, 
+                        new Point( (TAILLE_CASE * 2) + ligne * TAILLE_CASE, colonne * TAILLE_CASE), 
+                        TAILLE_CASE, 
+                        true)
+                    );
+                else
+                    fenetre.ajouter(
+                        new Carre(Couleur.GRIS, 
+                        new Point( (TAILLE_CASE * 2) + ligne * TAILLE_CASE, colonne * TAILLE_CASE), 
+                        TAILLE_CASE, 
+                        true)
+                    );
             }
         }
+
+        for (int ligne = 0; ligne < TAILLE_ECHIQUIER + 1; ligne++) {
+            fenetre.ajouter(
+                new Ligne(
+                    Couleur.NOIR, 
+                    new Point( (TAILLE_CASE * 2), ligne * TAILLE_CASE), 
+                    new Point( (TAILLE_CASE * 2) + TAILLE_CASE * 9, ligne * TAILLE_CASE))
+            );
+        }
+
+        for (int colonne = 0; colonne < TAILLE_ECHIQUIER + 1; colonne++) {
+            fenetre.ajouter(
+                new Ligne(Couleur.NOIR, 
+                new Point( (TAILLE_CASE * 2) + colonne * TAILLE_CASE, 0), 
+                new Point( (TAILLE_CASE * 2) + colonne * TAILLE_CASE, TAILLE_CASE * 9))
+            );
+        }
+
+        fenetre.rafraichir();
+    }
+
+    public static void pokemon(Fenetre fenetre, Plateau arene) {
+        // Pokémon du joueur 1 :
+        ArrayList<Piece> pokemon1 = arene.getPiecesJoueur1();
+
+        for (Piece pokemon : pokemon1) {
+            fenetre.ajouter(
+                new Texture("images/" + pokemon.getPokemon().getNombre() + ".png", 
+                new Point(pokemon.getPosition().getX() * TAILLE_CASE, pokemon.getPosition().getY() * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
+            );
+        }
+
+        // Pokémon du joueur 2 :
+        ArrayList<Piece> pokemon2 = arene.getPiecesJoueur2();
+
+        for (Piece pokemon : pokemon2) {
+            fenetre.ajouter(
+                new Texture("images/" + pokemon.getPokemon().getNombre() + ".png", 
+                new Point(pokemon.getPosition().getX() * TAILLE_CASE, pokemon.getPosition().getY() * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
+            );
+        }
+
+        fenetre.rafraichir();
     }
 
     public static void main(String[] args) {
-        Plateau arena = new Plateau();
+        Fenetre fenetre = new Fenetre("Échecs Pokémon par David Melocco", TAILLE_ECRAN_X, TAILLE_ECRAN_Y);
+        Plateau arene = new Plateau();
 
-        initTop(Couleur.VERT);
-        drawGrid(Couleur.NOIR);
-        initArena(arena);
+        echiquier(fenetre, arene);
 
-        while(loop) {
-            try {
-                Thread.sleep(REFRESH_RATE);
-            } catch (Exception e) {
-                System.out.println("An error as occured!");
-                System.exit(1);
-            }
-
-            window.rafraichir();
+        while(true) {
+            fenetre.rafraichir();
         }
     }
 }
