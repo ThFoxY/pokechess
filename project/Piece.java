@@ -82,6 +82,7 @@ public class Piece {
      * @param case
      */
     public Piece(Pokemon pokemon, int joueur, String position) {
+        // Erreur :
         if (
             (pokemon == null) || 
             (joueur < 0 || joueur > 2) || 
@@ -118,6 +119,7 @@ public class Piece {
     /**
      * Renvoie les déplacements possibles d'une pièce sur l'échiquier.
      * Principe : avec deux boucles imbriquées, on vérifie les cases aux alentours de la pièce.
+     * ! Méthode abstraite si les déplacements possibles diffèrent entre les pokémon.
      * @param arene
      * @return une liste dynamique contenant des objets de type Position.
      */
@@ -143,6 +145,7 @@ public class Piece {
     /**
      * Renvoie les confrontations possibles d'une pièce sur l'échiquier.
      * Principe : avec deux boucles imbriquées, on vérifie les cases aux alentours de la pièce.
+     * ! Méthode abstraite si les déplacements possibles diffèrent entre les pokémon.
      * @param arene
      * @return une liste dynamique contenant des objets de type Position.
      */
@@ -187,7 +190,7 @@ public class Piece {
      */
     public void setPosition(String position) { this.position = new Position(position); }
 
-    // ----- REDEFINIES -----
+    // ----- REDÉFINIES -----
 
     /**
      * Méthode equals.
@@ -198,7 +201,10 @@ public class Piece {
         if(o == null || getClass() != o.getClass()) return false;
         
         Piece piece = (Piece) o;
-        return (this.position.equals(piece.position));
+        return (
+            (this.pokemon.equals(piece.pokemon)) &&
+            (this.joueur == piece.joueur) && 
+            (this.position.equals(piece.position)));
     }
 
     /**

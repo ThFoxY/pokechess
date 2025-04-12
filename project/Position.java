@@ -1,87 +1,121 @@
 // Position.java
 // David MELOCCO (TD2 / TPC)
 
+/**
+ * Création d'une position.
+ */
 public class Position {
+// Attributs :
     private int x, y;
 
-// Constructors:
-    // Default: sets x and y to 0
+// Constructeurs :
+    /**
+     * Par défaut.
+     */
     public Position() {
         this.x = 0;
         this.y = 0;
     }
 
-    // Copy: takes a Position objet as a parameter
-    public Position(Position pos) {
-        this.x = pos.x;
-        this.y = pos.y;
+    /**
+     * Par copie.
+     * @param position
+     */
+    public Position(Position position) {
+        this.x = position.x;
+        this.y = position.y;
     }
 
-    // Two integers: takes two integers for x and y
-    public Position(int posX, int posY) {
-        // Error case:
-        if(posX < 0 || posX > 8 || posY < 0 || posY > 8) {
-            System.out.println("Oops, wrong values!");
+    /**
+     * Selon des coordonnées x et y.
+     * @param posX
+     * @param posY
+     */
+    public Position(int x, int y) {
+        // Erreur :
+        if(x < 0 || x > 8 || y < 0 || y > 8) {
+            System.out.println("Oups ! Mauvaise manipulation.");
             System.exit(1);
         }
-        this.x = posX;
-        this.y = posY;
+        this.x = x;
+        this.y = y;
     }
 
-    // String: takes a position in letter format:
-    public Position(String posCode) {
-        this.x = (int) (posCode.charAt(0) - 'A');
-        this.y = (int) (posCode.charAt(1) - '1');
+    /**
+     * Selon une case de l'échiquier.
+     * Principe : on sélectionne les caractères individuellement, on les soustrait par la valeur ASCII minimale (sur l'échiquier) et on les convertit en entier.
+     * @param position
+     */
+    public Position(String position) {
+        this.x = (int) (position.charAt(0) - 'A');
+        this.y = (int) (position.charAt(1) - '1');
     }
 
-// Getters:
-    // Gets x:
-    public int getX() {
-        return this.x;
-    }
+// Méthode :
+    // ----- GETTERS -----
 
-    // Gets y:
-    public int getY() {
-        return this.y;
-    }
+    /**
+     * Renvoie la coordonnée x d'une position.
+     * @return un entier.
+     */
+    public int getX() { return this.x; }
 
-// Setters:
-    // Sets x:
-    public void setX(int posX) {
-        if(posX < 0 || posX > 8) {
-            System.out.println("Oops, wrong value!");
+    /**
+     * Renvoie la coordonnée y d'une position.
+     * @return un entier.
+     */
+    public int getY() { return this.y; }
+
+    // ----- SETTERS -----
+
+    /**
+     * Met à jour la coordonnée x d'une position.
+     * @param x
+     */
+    public void setX(int x) {
+        // Erreur :
+        if(x < 0 || x > 8) {
+            System.out.println("Oups ! Mauvaise manipulation.");
             System.exit(1);
         }
-        this.x = posX;
+        this.x = x;
     }
 
-    // Sets y:
-    public void setY(int posY) {
-        if(posY < 0 ||posY > 8) {
-            System.out.println("Oops, wrong value!");
+    /**
+     * Met à jour la coordonnée y d'une position.
+     * @param y
+     */
+    public void setY(int y) {
+        // Erreur :
+        if(y < 0 ||y > 8) {
+            System.out.println("Oups ! Mauvaise manipulation.");
             System.exit(1);
         }
-        this.y = posY;
+        this.y = y;
     }
 
-// Methods:
-    // equals method:
+    // ----- REDÉFINIES -----
+    
+    /**
+     * Méthode equals.
+     */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
 
-        if(obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        Position position = (Position) obj;
-        return (this.x == position.x && this.y == position.y);
+        Position position = (Position) o;
+        return (
+            (this.x == position.x) && 
+            (this.y == position.y));
     }
 
-    // toString method:
+    /**
+     * Méthode toString.
+     */
     @Override
     public String toString() {
-        return (char)(this.x + 'A') + "" + (y + 1);
+        // Opération inverse.
+        return (char) (this.x + 'A') + "" + (y + 1);
     }
 }
