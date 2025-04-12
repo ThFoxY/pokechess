@@ -1,131 +1,214 @@
-import pokemons.*;
-import java.util.ArrayList;
-
 // Piece.java
 // David MELOCCO (TD2 / TPC)
 
+import pokemons.*;
+import java.util.ArrayList;
+
+/**
+ * Création d'une pièce.
+ */
 public class Piece {
+// Attributs :
     private Pokemon pokemon;
-    private int player;
+    private int joueur;
     private Position position;
 
-// Constructors:
-    // Default: sets a default Pokemon at A1.
+// Constructeurs :
+    /**
+     * Par défaut.
+     */
     public Piece() {
         this.pokemon = new Pikachu();
-        this.player = 1;
+        this.joueur = 1;
         this.position = new Position("A1");
     }
 
-    // Copy: takes a Piece objet as a parameter
+    /**
+     * Par copie.
+     * @param piece
+     */
     public Piece(Piece piece) {
         this.pokemon = piece.pokemon;
-        this.player = piece.player;
-        this.position = piece.position;
+        this.joueur = piece.joueur;
+        this.position = new Position(piece.position);
     }
 
-    // Numeric format:
-    public Piece(Pokemon pokemon, int player, int posX, int posY) {
-        if (player < 0 || player > 2 || posX < 0 || posX > 8 || posY < 0 || posX > 8) {
-            System.out.println("Oops, wrong values! :3");
+    /**
+     * Selon un pokémon, un joueur et des coordonnées x et y.
+     * @param pokemon
+     * @param joueur
+     * @param x
+     * @param y
+     */
+    public Piece(Pokemon pokemon, int joueur, int x, int y) {
+        // Erreur :
+        if (
+            (pokemon == null) || 
+            (joueur < 0 || joueur > 2) || 
+            (x < 0 || x > 8) || 
+            (y < 0 || y > 8)) {
+            System.out.println("Oups ! Mauvaise manipulation.");
             System.exit(1);
         }
         this.pokemon = pokemon;
-        this.player = player;
-        this.position = new Position(posX, posY);
+        this.joueur = joueur;
+        this.position = new Position(x, y);
     }
 
-    // Takes a Position object:
-    public Piece(Pokemon pokemon, int player, Position position) {
-        if (player < 0 || player > 2) {
-            System.out.println("Oops, wrong values! :3");
+    /**
+     * Selon un pokémon, un joueur et une position.
+     * @param pokemon
+     * @param joueur
+     * @param position
+     */
+    public Piece(Pokemon pokemon, int joueur, Position position) {
+        // Erreur :
+        if (
+            (pokemon == null) || 
+            (joueur < 0 || joueur > 2) || 
+            (position == null)) {
+            System.out.println("Oups ! Mauvaise manipulation.");
             System.exit(1);
         }
         this.pokemon = pokemon;
-        this.player = player;
-        this.position = position;
-    }
-
-    // Letter format:
-    public Piece(Pokemon pokemon, int player, String position) {
-        if (player < 0 || player > 2) {
-            System.out.println("Oops, wrong values! :3");
-            System.exit(1);
-        }
-        this.pokemon = pokemon;
-        this.player = player;
+        this.joueur = joueur;
         this.position = new Position(position);
     }
 
-// Getters:
-    // Returns position:
-    public Position getPosition() {
-        return this.position;
+    /**
+     * Selon un pokémon, un joueur et une case de l'échiquier.
+     * @param pokemon
+     * @param joueur
+     * @param case
+     */
+    public Piece(Pokemon pokemon, int joueur, String position) {
+        if (
+            (pokemon == null) || 
+            (joueur < 0 || joueur > 2) || 
+            (position == null)) {
+            System.out.println("Oups ! Mauvaise manipulation.");
+            System.exit(1);
+        }
+        this.pokemon = pokemon;
+        this.joueur = joueur;
+        this.position = new Position(position);
     }
 
-    // Returns player (1 or 2):
-    public int getPlayer() {
-        return this.player;
-    }
+// Méthodes :
+    // ----- GETTERS -----
 
-    // Returns Pokemon:
-    public Pokemon getPokemon() {
-        return this.pokemon;
-    }
+    /**
+     * Renvoie le type de pokémon d'une pièce.
+     * @return un objet de type Pokemon.
+     */
+    public Pokemon getPokemon() { return this.pokemon; }
 
-    // Checks if the Pokémon can move:
-    public ArrayList<Position> getDeplacementPossible(Plateau p) {
-        ArrayList<Position> moves = new ArrayList<>();
-        int piecePosX = this.getPosition().getX();
-        int piecePosY = this.getPosition().getY();
+    /**
+     * Renvoie le joueur d'une pièce.
+     * @return un entier pour le joueur (1 ou 2).
+     */
+    public int getJoueur() { return this.joueur; }
+
+    /**
+     * Renvoie la position d'une pièce.
+     * @return un objet de type Position.
+     */
+    public Position getPosition() { return this.position; }
+
+    /**
+     * Renvoie les déplacements possibles d'une pièce sur l'échiquier.
+     * Principe : avec deux boucles imbriquées, on vérifie les cases aux alentours de la pièce.
+     * @param arene
+     * @return une liste dynamique contenant des objets de type Position.
+     */
+    public ArrayList<Position> getDeplacementPossible(Plateau arene) {
+        ArrayList<Position> deplacements = new ArrayList<>();
+        int x = this.getPosition().getX();
+        int y = this.getPosition().getY();
         
-        for (int x = piecePosX - 1; x < piecePosX + 2; x++) {
-            for (int y = piecePosY - 1; y < piecePosY + 2; y++) {
-                if (x >= 0 && x <= 8 && y >= 0 && y <= 8) {
-                    if (p.getCase(x, y) == null) {
-                        moves.add(new Position(x, y));
+        for (int ligne = x - 1; ligne < x + 2; ligne++) {
+            for (int colonne = y - 1; colonne < y + 2; colonne++) {
+                // Si la case existe :
+                if (ligne >= 0 && ligne <= 8 && colonne >= 0 && colonne <= 8) {
+                    // Si la case ne contient pas de pokémon :
+                    if (arene.getCase(x, y) == null)
+                        // Ajout de la position dans la liste des déplacements possibles de la pièce.
+                        deplacements.add(new Position(x, y));
+                }
+            }
+        }
+        return deplacements;
+    }
+
+    /**
+     * Renvoie les confrontations possibles d'une pièce sur l'échiquier.
+     * Principe : avec deux boucles imbriquées, on vérifie les cases aux alentours de la pièce.
+     * @param arene
+     * @return une liste dynamique contenant des objets de type Position.
+     */
+    public ArrayList<Position> getAttaquePossible(Plateau arene) {
+        ArrayList<Position> confrontations = new ArrayList<>();
+        int x = this.getPosition().getX();
+        int y = this.getPosition().getY();
+        
+        for (int ligne = x - 1; ligne < x + 2; ligne++) {
+            for (int colonne = y - 1; colonne < y + 2; colonne++) {
+                // Si la case existe :
+                if (ligne >= 0 && ligne <= 8 && colonne >= 0 && colonne <= 8) {
+                    // Si la case contient un pokémon :
+                    if (arene.getCase(x, y) != null) {
+                        // Ajout de la position du pokémon à confronter dans la liste des confrontations possibles.
+                        confrontations.add(arene.getCase(x, y).getPosition());
                     }
                 }
             }
         }
-        return moves;
+        return confrontations;
     }
 
-    public ArrayList<Position> getAttaquePossible(Plateau p) {
-        ArrayList<Position> attacks = new ArrayList<>();
-        int piecePosX = this.getPosition().getX();
-        int piecePosY = this.getPosition().getY();
-        
-        for (int x = piecePosX - 1; x < piecePosX + 2; x++) {
-            for (int y = piecePosY - 1; y < piecePosY + 2; y++) {
-                if (x >= 0 && x <= 8 && y >= 0 && y <= 8) {
-                    if (p.getCase(x, y) != null) {
-                        attacks.add(p.getCase(x, y).getPosition());
-                    }
-                }
-            }
-        }
-        return attacks;
-    }
+    // ----- SETTERS -----
 
-// Methods:
-    // equals method:
+    /**
+     * Met à jour la position d'une pièce selon des coordonnées x et y.
+     * @param x
+     * @param y
+     */
+    public void setPosition(int x, int y) { this.position = new Position(x, y); }
+
+    /**
+     * Met à jour la position d'une pièce selon une position.
+     * @param position
+     */
+    public void setPosition(Position position) { this.position = new Position(position); }
+
+    /**
+     * Met à jour la position d'une pièce selon un case de l'échiquier.
+     * @param position
+     */
+    public void setPosition(String position) { this.position = new Position(position); }
+
+    // ----- REDEFINIES -----
+
+    /**
+     * Méthode equals.
+     */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if(obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        Piece piece = (Piece) obj;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        Piece piece = (Piece) o;
         return (this.position.equals(piece.position));
     }
 
-    // toString method:
+    /**
+     * Méthode toString.
+     */
     @Override
     public String toString() {
-        return new String(this.getPokemon() + " of player " + this.getPlayer() + " at " + this.getPosition());
+        return new String(
+            this.getPokemon() + " du joueur " + 
+            this.getJoueur() + " en " + 
+            this.getPosition());
     }
 }

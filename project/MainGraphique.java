@@ -14,13 +14,13 @@ import java.util.ArrayList;
  * Création de l'interface graphique via MG2D.
  */
 public class MainGraphique {
-// Constantes:
+// Constantes :
     public static final int TAILLE_CASE = 60;
     public static final int TAILLE_ECHIQUIER = 9;
     public static final int TAILLE_ECRAN_X = TAILLE_CASE * 13;
     public static final int TAILLE_ECRAN_Y = TAILLE_CASE * 9;
 
-// Méthodes:
+// Méthodes :
     /**
      * Création de l'échiquier.
      * @param fenetre
