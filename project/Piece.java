@@ -50,6 +50,7 @@ public class Piece {
             System.out.println("Oups ! Mauvaise manipulation.");
             System.exit(1);
         }
+
         this.pokemon = pokemon;
         this.joueur = joueur;
         this.position = new Position(x, y);
@@ -70,6 +71,7 @@ public class Piece {
             System.out.println("Oups ! Mauvaise manipulation.");
             System.exit(1);
         }
+
         this.pokemon = pokemon;
         this.joueur = joueur;
         this.position = new Position(position);
@@ -90,6 +92,7 @@ public class Piece {
             System.out.println("Oups ! Mauvaise manipulation.");
             System.exit(1);
         }
+
         this.pokemon = pokemon;
         this.joueur = joueur;
         this.position = new Position(position);
@@ -159,10 +162,9 @@ public class Piece {
                 // Si la case existe :
                 if (ligne >= 0 && ligne <= 8 && colonne >= 0 && colonne <= 8) {
                     // Si la case contient un pokémon :
-                    if (arene.getCase(x, y) != null) {
+                    if (arene.getCase(x, y) != null)
                         // Ajout de la position du pokémon à confronter dans la liste des confrontations possibles.
                         confrontations.add(arene.getCase(x, y).getPosition());
-                    }
                 }
             }
         }

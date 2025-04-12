@@ -47,6 +47,7 @@ public class Position {
      * @param position
      */
     public Position(String position) {
+        //! Vérifier en cas d'erreur.
         this.x = (int) (position.charAt(0) - 'A');
         this.y = (int) (position.charAt(1) - '1');
     }
