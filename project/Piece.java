@@ -135,10 +135,12 @@ public class Piece {
             for (int colonne = y - 1; colonne < y + 2; colonne++) {
                 // Si la case existe :
                 if (ligne >= 0 && ligne <= 8 && colonne >= 0 && colonne <= 8) {
+                    Piece caseEnCours = arene.getCase(ligne, colonne);
+
                     // Si la case ne contient pas de pokémon :
-                    if (arene.getCase(x, y) == null)
+                    if (caseEnCours == null)
                         // Ajout de la position dans la liste des déplacements possibles de la pièce.
-                        deplacements.add(new Position(x, y));
+                        deplacements.add(new Position(ligne, colonne));
                 }
             }
         }
@@ -161,10 +163,12 @@ public class Piece {
             for (int colonne = y - 1; colonne < y + 2; colonne++) {
                 // Si la case existe :
                 if (ligne >= 0 && ligne <= 8 && colonne >= 0 && colonne <= 8) {
+                    Piece caseEnCours = arene.getCase(ligne, colonne);
+
                     // Si la case contient un pokémon :
-                    if (arene.getCase(x, y) != null)
+                    if (caseEnCours != null && (caseEnCours.position.getX() != x && caseEnCours.position.getY() != y) && caseEnCours.getJoueur() != this.joueur)
                         // Ajout de la position du pokémon à confronter dans la liste des confrontations possibles.
-                        confrontations.add(arene.getCase(x, y).getPosition());
+                        confrontations.add(arene.getCase(ligne, colonne).getPosition());
                 }
             }
         }
@@ -215,7 +219,7 @@ public class Piece {
     @Override
     public String toString() {
         return new String(
-            this.getPokemon() + " du joueur " + 
+            this.getPokemon().getEspece() + " du joueur " + 
             this.getJoueur() + " en " + 
             this.getPosition());
     }

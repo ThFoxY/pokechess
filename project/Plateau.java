@@ -154,6 +154,7 @@ public class Plateau {
      * @param position
      * @return un objet de type Pokemon, sinon null.
      */
+    //TODO : à corriger.
     public Piece getCase(Position position) { return this.getCase(new Position(position.getX(), position.getY())); }
 
     /**
@@ -161,6 +162,7 @@ public class Plateau {
      * @param position
      * @return un objet de type Pokemon, sinon null.
      */
+    //TODO : à corriger.
     public Piece getCase(String position) {
         //! Vérifier en cas d'erreur.
         return this.getCase(new Position(position));
