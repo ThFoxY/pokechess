@@ -5,6 +5,7 @@ import MG2D.Fenetre;
 import MG2D.Souris;
 import MG2D.Couleur;
 import MG2D.geometrie.Point;
+import MG2D.geometrie.Rectangle;
 import MG2D.geometrie.Ligne;
 import MG2D.geometrie.Carre;
 import MG2D.geometrie.Cercle;
@@ -26,12 +27,30 @@ public class MainGraphique {
     public static final int TAILLE_ECRAN_Y = TAILLE_CASE * 9;
 
 // Méthodes :
+    public static Font chargerPolice() {
+        Font policePokemon = null;
+        try {
+            policePokemon = Font.createFont(Font.TRUETYPE_FONT, new File("PokemonClassic.ttf"));
+            policePokemon = policePokemon.deriveFont(Font.BOLD, 14f);
+        } catch (Exception e) {
+            e.printStackTrace();
+            policePokemon = new Font("Monospaced", Font.BOLD, 14);
+        }
+        return policePokemon;
+    }
+
     /**
      * Création de l'échiquier.
      * @param fenetre
      * @param arene
      */
-    public static void echiquier(Fenetre fenetre, Plateau arene) {
+    public static void echiquier(Fenetre fenetre, Plateau arene, int joueur) {
+        if (joueur == 1) {
+            fenetre.setBackground(Couleur.ROUGE);
+        } else {
+            fenetre.setBackground(Couleur.BLEU);
+        }
+
         for (int ligne = 0; ligne < TAILLE_ECHIQUIER; ligne++) {
             for (int colonne = 0; colonne < TAILLE_ECHIQUIER; colonne++) {
                 if ((ligne + colonne) % 2 == 1)
@@ -72,15 +91,6 @@ public class MainGraphique {
     }
 
     public static void pokemon(Fenetre fenetre, Plateau arene) {
-        Font policePokemon;
-        try {
-            policePokemon = Font.createFont(Font.TRUETYPE_FONT, new File("PokemonClassic.ttf"));
-            policePokemon = policePokemon.deriveFont(Font.BOLD, 14f);
-        } catch (Exception e) {
-            e.printStackTrace();
-            policePokemon = new Font("Monospaced", Font.BOLD, 14);
-        }
-
         // Pokémon du joueur 1 :
         ArrayList<Piece> pokemon1 = arene.getPiecesJoueur1();
 
@@ -94,7 +104,7 @@ public class MainGraphique {
                 new Texte(
                     Couleur.ROUGE, 
                     new String("" + pokemon.getPokemon().getPV()), 
-                    policePokemon, 
+                    chargerPolice(), 
                     new Point( (TAILLE_CASE * 2) + pokemon.getPosition().getX() * TAILLE_CASE + 20, pokemon.getPosition().getY() * TAILLE_CASE + 10))
             );
         }
@@ -110,9 +120,9 @@ public class MainGraphique {
 
             fenetre.ajouter(
                 new Texte(
-                    Couleur.VERT, 
+                    Couleur.BLEU, 
                     new String("" + pokemon.getPokemon().getPV()), 
-                    policePokemon, 
+                    chargerPolice(), 
                     new Point( (TAILLE_CASE * 2) + pokemon.getPosition().getX() * TAILLE_CASE + 20, pokemon.getPosition().getY() * TAILLE_CASE + 10))
             );
         }
@@ -125,8 +135,9 @@ public class MainGraphique {
      * @param fenetre
      * @param arene
      */
-    public static void rafraichir(Fenetre fenetre, Plateau arene) {
-        echiquier(fenetre, arene);
+    public static void rafraichir(Fenetre fenetre, Plateau arene, int joueur) {
+        fenetre.effacer();
+        echiquier(fenetre, arene, joueur);
         pokemon(fenetre, arene);
     }
 
@@ -145,37 +156,72 @@ public class MainGraphique {
         Fenetre fenetre = new Fenetre("Échecs Pokémon par David Melocco", TAILLE_ECRAN_X, TAILLE_ECRAN_Y);
         Souris souris = fenetre.getSouris();
         Plateau arene = new Plateau();
-
-        rafraichir(fenetre, arene);
-
         int joueur = 1;
+
+        fenetre.setBackground(Couleur.NOIR);
+        rafraichir(fenetre, arene, joueur);
+
         Piece pokemonDepart = null;
-        Position pokemonArrivee = null;
+        Position positionArrivee = null;
 
         while(true) {
-            while(!souris.getClicGauche()) {
-                try {
-                    Thread.sleep(1);
-                } catch (Exception e) {}
-            }
-            int x = (souris.getPosition().getX() / TAILLE_CASE) - 2;
-            int y = souris.getPosition().getY() / TAILLE_CASE;
-            
-            if ( (x >= 0) && (x <= 8) && (y >= 0) && (y <= 8) ) {
-                if (arene.getCase(x, y) != null) {
-                    pokemonDepart = arene.getCase(x, y);
+            while(pokemonDepart == null) {
+                while(!souris.getClicGauche()) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (Exception e) {}
+                }
+
+                int x = (souris.getPosition().getX() / TAILLE_CASE) - 2;
+                int y = souris.getPosition().getY() / TAILLE_CASE;
+                
+                if ( (x >= 0) && (x <= 8) && (y >= 0) && (y <= 8) ) {
+                    if (arene.getCase(x, y) != null && arene.getCase(x, y).getJoueur() == joueur) {
+                        pokemonDepart = arene.getCase(x, y);
+                    }
                 }
             }
 
-            if (pokemonDepart != null) {
-                ArrayList<Position> possibilites = pokemonDepart.getDeplacementPossible(arene);
+            ArrayList<Position> possibilites = pokemonDepart.getDeplacementPossible(arene);
 
-                if (!possibilites.isEmpty()) {
-                    rafraichir(fenetre, arene);
-                    afficherDeplacements(fenetre, possibilites);
-                    fenetre.rafraichir();
+            if (!possibilites.isEmpty()) {
+                rafraichir(fenetre, arene, joueur);
+                afficherDeplacements(fenetre, possibilites);
+                fenetre.rafraichir();
+            }
+
+            while(positionArrivee == null) {
+                while(!souris.getClicGauche()) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (Exception e) {}
+                }
+
+                int x = (souris.getPosition().getX() / TAILLE_CASE) - 2;
+                int y = souris.getPosition().getY() / TAILLE_CASE;
+
+                if ( (x >= 0) && (x <= 8) && (y >= 0) && (y <= 8) ) {
+                    positionArrivee = new Position(x, y);
                 }
             }
+
+            if (possibilites.contains(positionArrivee)) {
+                pokemonDepart.setPosition(positionArrivee);
+
+                pokemonDepart = null;
+                positionArrivee = null;
+
+                if (joueur == 1)
+                    joueur = 2;
+                else
+                    joueur = 1;
+            } else {
+                pokemonDepart = null;
+                positionArrivee = null;
+            }
+
+            rafraichir(fenetre, arene, joueur);
+            fenetre.rafraichir();
         }
     }
 }
