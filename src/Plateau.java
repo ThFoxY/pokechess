@@ -3,6 +3,7 @@
 
 import pokemons.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Création d'une arène.
@@ -192,6 +193,18 @@ public class Plateau {
                 pieces.add(piece);
         }
         return pieces;
+    }
+
+    /**
+     * Nettoie l'échiquier des pokémon K.O.
+     */
+    public void nettoyer() {
+        Iterator<Piece> it = arene.iterator();
+        while (it.hasNext()) {
+            if (it.next().getPokemon().getPV() <= 0) {
+                it.remove();
+            }
+        }
     }
 
     // ----- REDÉFINIES -----

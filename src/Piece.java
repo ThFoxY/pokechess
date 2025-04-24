@@ -166,7 +166,7 @@ public class Piece {
                     Piece caseEnCours = arene.getCase(ligne, colonne);
 
                     // Si la case contient un pokémon :
-                    if (caseEnCours != null && (caseEnCours.position.getX() != x && caseEnCours.position.getY() != y) && caseEnCours.getJoueur() != this.joueur)
+                    if (caseEnCours != null && caseEnCours.getJoueur() != this.joueur)
                         // Ajout de la position du pokémon à confronter dans la liste des confrontations possibles.
                         confrontations.add(arene.getCase(ligne, colonne).getPosition());
                 }

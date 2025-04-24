@@ -203,6 +203,9 @@ public abstract class Pokemon {
         }
     }
 
+    // ----- SETTERS -----
+    public void setPV(int pv) { this.pv = pv; }
+
     // ----- REDÉFINIES -----
 
     /**

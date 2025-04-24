@@ -25,6 +25,10 @@ public class MainGraphique {
     public static final int TAILLE_ECRAN_Y = TAILLE_CASE * 9;
 
 // Méthodes :
+    /**
+     * Charge la police d'écriture personnalisée (Pokémon Classic).
+     * @return un objet de type Font.
+     */
     public static Font chargerPolice() {
         Font policePokemon = null;
         try {
@@ -88,13 +92,20 @@ public class MainGraphique {
         fenetre.rafraichir();
     }
 
+    /**
+     * Affiche les pokémon des deux joueurs.
+     * @param fenetre
+     * @param arene
+     */
     public static void pokemon(Fenetre fenetre, Plateau arene) {
+        arene.nettoyer();
+
         // Pokémon du joueur 1 :
         ArrayList<Piece> pokemon1 = arene.getPiecesJoueur1();
 
         for (Piece pokemon : pokemon1) {
             fenetre.ajouter(
-                new Texture("images/" + pokemon.getPokemon().getNumero() + ".png", 
+                new Texture("assets/" + pokemon.getPokemon().getNumero() + ".png", 
                 new Point( (TAILLE_CASE * 2) + pokemon.getPosition().getX() * TAILLE_CASE, pokemon.getPosition().getY() * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
             );
             
@@ -112,7 +123,7 @@ public class MainGraphique {
 
         for (Piece pokemon : pokemon2) {
             fenetre.ajouter(
-                new Texture("images/" + pokemon.getPokemon().getNumero() + ".png", 
+                new Texture("assets/" + pokemon.getPokemon().getNumero() + ".png", 
                 new Point( (TAILLE_CASE * 2) + pokemon.getPosition().getX() * TAILLE_CASE, pokemon.getPosition().getY() * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
             );
 
@@ -128,28 +139,41 @@ public class MainGraphique {
         fenetre.rafraichir();
     }
 
-    public static void changement(Fenetre fenetre, Plateau arene, int x, int y) {
-        Couleur couleur;
-        if ((x + y) % 2 == 1) {
-            couleur = Couleur.BLANC;
-        } else {
-            couleur = Couleur.GRIS;
-        }
-        fenetre.ajouter(
-            new Carre(
-                couleur, 
-                new Point( (TAILLE_CASE * 2) + x * TAILLE_CASE, y * TAILLE_CASE), 
-                TAILLE_CASE, 
-                true
-            )
-        );
-
-        Piece pokemon = arene.getCase(x, y);
-        if (pokemon != null) {
-            fenetre.ajouter(
-                new Texture("images/" + pokemon.getPokemon().getNumero() + ".png", 
-                new Point( (TAILLE_CASE * 2) + pokemon.getPosition().getX() * TAILLE_CASE, pokemon.getPosition().getY() * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
-            );
+    /**
+     * Affiche les déplacements possibles.
+     * @param fenetre
+     * @param deplacements
+     * @param position
+     */
+    public static void afficherDeplacements(Fenetre fenetre, ArrayList<Position> deplacements, Position position) {
+        for (Position possibilites : deplacements) {
+            int x = Integer.compare(possibilites.getX(), position.getX());
+            int y = Integer.compare(possibilites.getY(), position.getY());
+    
+            String direction = "";
+    
+            if (y < 0)
+                direction += "bas";
+            if (y > 0)
+                direction += "haut";
+            if (x < 0) {
+                if (direction.isEmpty())
+                    direction += "gauche";
+                else
+                    direction += "_gauche";
+            }
+            if (x > 0) {
+                if (direction.isEmpty())
+                    direction += "droite";
+                else
+                    direction += "_droite";
+            }
+    
+            if (!direction.isEmpty()) {
+                String chemin = "assets/fleches/" + direction + ".png";
+                Point point = new Point((TAILLE_CASE * 2) + possibilites.getX() * TAILLE_CASE, possibilites.getY() * TAILLE_CASE);
+                fenetre.ajouter(new Texture(chemin, point, TAILLE_CASE, TAILLE_CASE));
+            }
         }
     }
 
@@ -164,99 +188,84 @@ public class MainGraphique {
         pokemon(fenetre, arene);
     }
 
-    public static void afficherDeplacements(Fenetre fenetre, ArrayList<Position> deplacements, Position position) {
-        for (Position possibilites : deplacements) {
-            int x = possibilites.getX();
-            int y = possibilites.getY();
-
-            if (x < position.getX() && y == position.getY())
-                fenetre.ajouter(
-                    new Texture("images/arrows/left.png", new Point( (TAILLE_CASE * 2) + x * TAILLE_CASE, y * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
-                );
-            if (x > position.getX() && y == position.getY())
-                fenetre.ajouter(
-                    new Texture("images/arrows/right.png", new Point( (TAILLE_CASE * 2) + x * TAILLE_CASE, y * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
-                );
-            if (y < position.getY() && x == position.getX())
-                fenetre.ajouter(
-                    new Texture("images/arrows/down.png", new Point( (TAILLE_CASE * 2) + x * TAILLE_CASE, y * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
-                );
-            if (y > position.getY() && x == position.getX())
-                fenetre.ajouter(
-                    new Texture("images/arrows/up.png", new Point( (TAILLE_CASE * 2) + x * TAILLE_CASE, y * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
-                );
-            if (x < position.getX() && y < position.getY())
-                fenetre.ajouter(
-                    new Texture("images/arrows/down_left.png", new Point( (TAILLE_CASE * 2) + x * TAILLE_CASE, y * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
-                );
-            if (x < position.getX() && y > position.getY())
-                fenetre.ajouter(
-                    new Texture("images/arrows/up_left.png", new Point( (TAILLE_CASE * 2) + x * TAILLE_CASE, y * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
-                );
-            if (x > position.getX() && y < position.getY())
-                fenetre.ajouter(
-                    new Texture("images/arrows/down_right.png", new Point( (TAILLE_CASE * 2) + x * TAILLE_CASE, y * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
-                );
-            if (x > position.getX() && y > position.getY())
-                fenetre.ajouter(
-                    new Texture("images/arrows/up_right.png", new Point( (TAILLE_CASE * 2) + x * TAILLE_CASE, y * TAILLE_CASE), TAILLE_CASE, TAILLE_CASE)
-                );
-        }
-    }
-
     public static void main(String[] args) {
-        Fenetre fenetre = new Fenetre("Échecs Pokémon par David Melocco", TAILLE_ECRAN_X, TAILLE_ECRAN_Y);
+        // Création de la fenêtre :
+        Fenetre fenetre = new Fenetre("Échecs Pokémon", TAILLE_ECRAN_X, TAILLE_ECRAN_Y);
         Souris souris = fenetre.getSouris();
-        Plateau arene = new Plateau();
-        int joueur = 1;
 
+        // Création de l'échiquier :
+        Plateau arene = new Plateau();
+        int joueur = 1; // Joueur qui joue le coup.
         rafraichir(fenetre, arene, joueur);
 
         Piece pokemonDepart = null;
         Position positionArrivee = null;
 
+        // TODO : tant que le Mewtwo est vivant.
         while(true) {
+            // Tant que le joueur n'a pas choisi de pokémon à déplacer :
             while(pokemonDepart == null) {
+                // Attente d'un clic gauche.
                 while(!souris.getClicGauche()) {
                     try {
                         Thread.sleep(10);
                     } catch (Exception e) {}
                 }
 
+                // Récupère les coordonnées de la souris sur l'échiquier :
                 int x = (souris.getPosition().getX() / TAILLE_CASE) - 2;
                 int y = souris.getPosition().getY() / TAILLE_CASE;
                 
+                // Si la souris est sur l'échiquier :
                 if ( (x >= 0) && (x <= 8) && (y >= 0) && (y <= 8) ) {
+                    // Si la case a un pokémon et qu'il appartient au joueur qui joue le coup :
                     if (arene.getCase(x, y) != null && arene.getCase(x, y).getJoueur() == joueur) {
-                        pokemonDepart = arene.getCase(x, y);
+                        pokemonDepart = arene.getCase(x, y);    // Pokémon saisi pour le déplacer.
                     }
                 }
             }
 
+            // Création des possibilités de déplacements/d'attaques.
             ArrayList<Position> possibilites = pokemonDepart.getDeplacementPossible(arene);
+            ArrayList<Position> confrontations = pokemonDepart.getAttaquePossible(arene);
 
+            // Si le pokémon peut se déplacer :
             if (!possibilites.isEmpty()) {
+                // Afficher les déplacements possibles et rafraîchir l'échiquier :
                 afficherDeplacements(fenetre, possibilites, pokemonDepart.getPosition());
                 fenetre.rafraichir();
             }
 
+            // Tant que le joueur n'a pas déplacé le pokémon choisi :
             while(positionArrivee == null) {
+                // Attente d'un clic gauche.
                 while(!souris.getClicGauche()) {
                     try {
                         Thread.sleep(10);
                     } catch (Exception e) {}
                 }
 
+                // Récupère les coordonnées de la souris sur l'échiquier :
                 int x = (souris.getPosition().getX() / TAILLE_CASE) - 2;
                 int y = souris.getPosition().getY() / TAILLE_CASE;
 
+                // Si la souris est sur l'échiquier :
                 if ( (x >= 0) && (x <= 8) && (y >= 0) && (y <= 8) ) {
-                    positionArrivee = new Position(x, y);
+                    positionArrivee = new Position(x, y);   // Case de déplacement.
                 }
             }
 
-            if (possibilites.contains(positionArrivee)) {
-                pokemonDepart.setPosition(positionArrivee);
+            if (possibilites.contains(positionArrivee) || confrontations.contains(positionArrivee)) {
+                if (confrontations.contains(positionArrivee)) {
+                    Piece pokemonAttaque = arene.getCase(positionArrivee.getX(), positionArrivee.getY());
+                    // TODO : corriger la méthode d'attaque.
+                    while(pokemonDepart.getPokemon().getPV() > 0 && pokemonAttaque.getPokemon().getPV() > 0)
+                        pokemonDepart.getPokemon().attaque(pokemonAttaque.getPokemon());
+                }
+
+                if (pokemonDepart.getPokemon().getPV() > 0) {
+                    pokemonDepart.setPosition(positionArrivee);
+                }
 
                 pokemonDepart = null;
                 positionArrivee = null;
@@ -270,7 +279,7 @@ public class MainGraphique {
                 positionArrivee = null;
             }
 
-            echiquier(fenetre, arene, joueur);
+            rafraichir(fenetre, arene, joueur);
             fenetre.rafraichir();
         }
     }
