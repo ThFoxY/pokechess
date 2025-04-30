@@ -184,25 +184,32 @@ public class MainGraphique {
      */
     public static void rafraichir(Fenetre fenetre, Plateau arene, int joueur) {
         fenetre.effacer();
-        echiquier(fenetre, arene, joueur);
-        pokemon(fenetre, arene);
+
+        if (arene.getMewtwo(1) != null && arene.getMewtwo(2) != null) {
+            echiquier(fenetre, arene, joueur);
+            pokemon(fenetre, arene);
+        } else {
+            fenetre.effacer();
+        }
     }
 
     public static void main(String[] args) {
         // Création de la fenêtre :
         Fenetre fenetre = new Fenetre("Échecs Pokémon", TAILLE_ECRAN_X, TAILLE_ECRAN_Y);
         Souris souris = fenetre.getSouris();
+        Plateau arene = new Plateau("pokemon_j1.txt", "pokemon_j2.txt");
 
-        // Création de l'échiquier :
-        Plateau arene = new Plateau();
+        // Création de l'écran titre :
+        fenetre.rafraichir();
+
         int joueur = 1; // Joueur qui joue le coup.
         rafraichir(fenetre, arene, joueur);
 
         Piece pokemonDepart = null;
         Position positionArrivee = null;
 
-        // TODO : tant que le Mewtwo est vivant.
-        while(true) {
+        // Tant qu'aucun Mewtwo n'a été battu :
+        while(arene.getMewtwo(1) != null && arene.getMewtwo(2) != null) {
             // Tant que le joueur n'a pas choisi de pokémon à déplacer :
             while(pokemonDepart == null) {
                 // Attente d'un clic gauche.
@@ -258,7 +265,7 @@ public class MainGraphique {
             if (possibilites.contains(positionArrivee) || confrontations.contains(positionArrivee)) {
                 if (confrontations.contains(positionArrivee)) {
                     Piece pokemonAttaque = arene.getCase(positionArrivee.getX(), positionArrivee.getY());
-                    // TODO : corriger la méthode d'attaque.
+
                     while(pokemonDepart.getPokemon().getPV() > 0 && pokemonAttaque.getPokemon().getPV() > 0)
                         pokemonDepart.getPokemon().attaque(pokemonAttaque.getPokemon());
                 }

@@ -4,7 +4,7 @@ package pokemons;
 // David MELOCCO (TD2 / TPC)
 
 public abstract class Pokemon {
-    protected int num, type1, type2, pv, att, def, vit, degats_infliges;
+    protected int num, type1, type2, pv, att, def, vit;
     protected String nom;
 
     /**
@@ -142,69 +142,87 @@ public abstract class Pokemon {
      * Méthode d'attaque contre un autre pokémon.
      * @param p un objet de type Pokemon.
      */
-    // TODO : à retravailler
-    public void attaque(Pokemon p) {
-        // Le premier pokémon attaque :
-        if (this.vit >= p.vit){
-            System.out.println("\t\t" + this.nom + " attaque en premier !");
-            degats_infliges = (this.att - p.def);
-            if(degats_infliges < 0) {
-                degats_infliges = 0;
+    public void attaque(Pokemon pokemon) {
+        double degats;
+        double coef;
+    
+        // Si le premier pokémon est plus rapide :
+        if (this.vit >= pokemon.vit) {
+            System.out.println(this.nom + " attaque en premier.");
+    
+            coef = Type.getEfficacite(this.type1, pokemon.type2);
+    
+            degats = (this.att - pokemon.def) * coef;
+            if (coef == 0) {
+                degats = 0;
+                System.out.println("C'est inefficace !");
+            } else if (degats <= 0) {
+                degats = 1;
             }
 
-            p.pv -= degats_infliges;
-            if(p.pv < 0) {
-                p.pv = 0;
-            }
-            System.out.println("\t\t💢​  " + this.nom + " a infligé " + degats_infliges + "PV !");
+            pokemon.pv -= degats;
+            if (pokemon.pv < 0)
+                pokemon.pv = 0;
+            System.out.println("💢 " + this.nom + " inflige " + degats + " de dégâts à " + pokemon.nom + ".");
+    
+            // Contre-attaque du second pokémon :
+            if (pokemon.pv > 0) {
+                System.out.println(pokemon.nom + " contre-attaque.");
 
-            // Le second pokémon s'il est toujours vivant :
-            if(p.pv > 0) {
-                System.out.println("\t\t" + p.nom + " attaque à son tour !");
-                degats_infliges = (p.att - this.def);
-                if(degats_infliges < 0) {
-                    degats_infliges = 0;
+                coef = Type.getEfficacite(pokemon.type1, this.type2);
+    
+                degats = (pokemon.att - this.def) * coef;
+                if (coef == 0) {
+                    degats = 0;
+                    System.out.println("C'est inefficace !");
+                } else if (degats <= 0) {
+                    degats = 1;
                 }
 
-                this.pv -= degats_infliges;
-                if(this.pv < 0) {
+                this.pv -= degats;
+                if (this.pv < 0)
                     this.pv = 0;
-                }
-                System.out.println("\t\t💢​  " + p.nom + " a infligé " + degats_infliges + "PV !");
+                System.out.println("💢 " + pokemon.nom + " inflige " + degats + " de dégâts à " + this.nom + ".");
             }
-        // Le second pokémon attaque :
+    
         } else {
-            System.out.println("\t\t" + p.nom + " attaque en premier !");
-            degats_infliges = (p.att - this.def);
-            if(degats_infliges < 0) {
-                degats_infliges = 0;
+            // Si le second pokémon est plus rapide :
+            System.out.println(pokemon.nom + " attaque en premier.");
+    
+            coef = Type.getEfficacite(pokemon.type1, this.type2);
+    
+            degats = (pokemon.att - this.def) * coef;
+            if (coef == 0) {
+                degats = 0;
+                System.out.println("C'est inefficace !");
+            } else if (degats <= 0) {
+                degats = 1;
             }
 
-            this.pv -= degats_infliges;
-            if(this.pv < 0) {
+            this.pv -= degats;
+            if (this.pv < 0)
                 this.pv = 0;
-            }
-            System.out.println("\t\t💢​  " + p.nom + " a infligé " + degats_infliges + "PV !");
-
-            // Le premier pokémon attaque s'il est toujours vivant :
-            if(this.pv > 0) {
-                System.out.println("\t\t" + this.nom + " attaque à son tour !");
-                degats_infliges = (this.att - p.def);
-                if(degats_infliges < 0) {
-                    degats_infliges = 0;
+            System.out.println("💢 " + pokemon.nom + " inflige " + degats + " de dégâts à " + this.nom + ".");
+    
+            if (this.pv > 0) {
+                System.out.println(this.nom + " contre-attaque.");
+                coef = Type.getEfficacite(this.type1, pokemon.type2);
+    
+                degats = (this.att - pokemon.def) * coef;
+                if (coef == 0) {
+                    degats = 0;
+                    System.out.println("C'est inefficace !");
+                } else if (degats <= 0) {
+                    degats = 1;
                 }
 
-                p.pv -= degats_infliges;
-                if(p.pv < 0) {
-                    p.pv = 0;
-                }
-                System.out.println("\t\t💢​  " + this.nom + " a infligé " + degats_infliges + "PV !");
+                pokemon.pv -= degats;
+                if (pokemon.pv < 0)
+                    pokemon.pv = 0;
+                System.out.println("💢 " + this.nom + " inflige " + degats + " de dégâts à " + pokemon.nom + ".");
             }
         }
-    }
-
-    // ----- SETTERS -----
-    public void setPV(int pv) { this.pv = pv; }
+    }    
 
     // ----- REDÉFINIES -----
 
