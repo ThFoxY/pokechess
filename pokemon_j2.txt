@@ -1,1 +1,4 @@
-Mewtwo;E5
+Mewtwo;E9
+Lamantine;D8
+Lamantine;E8
+Lamantine;F8

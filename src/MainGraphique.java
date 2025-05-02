@@ -1,6 +1,7 @@
 // MainGraphique.java
 // David MELOCCO (TD2 / TPC)
 
+// Imports des bibliothèques (MG2D) nécessaires uniquement pour l'optimisation.
 import MG2D.Fenetre;
 import MG2D.Souris;
 import MG2D.Couleur;
@@ -10,6 +11,7 @@ import MG2D.geometrie.Carre;
 import MG2D.geometrie.Texture;
 import MG2D.geometrie.Texte;
 
+// Imports d'utilitaires Java pour les tableaux dynamiques et l'affichage de police d'écriture personnalisée.
 import java.util.ArrayList;
 import java.awt.Font;
 import java.io.File;
@@ -32,7 +34,7 @@ public class MainGraphique {
     public static Font chargerPolice(int taille) {
         Font policePokemon = null;
         try {
-            policePokemon = Font.createFont(Font.TRUETYPE_FONT, new File("PokemonClassic.ttf"));
+            policePokemon = Font.createFont(Font.TRUETYPE_FONT, new File("assets/PokemonClassic.ttf"));
             policePokemon = policePokemon.deriveFont(Font.BOLD, taille);
         } catch (Exception e) {
             policePokemon = new Font("Monospaced", Font.BOLD, taille);
@@ -48,7 +50,10 @@ public class MainGraphique {
     public static void echiquier(Fenetre fenetre, Plateau arene, int joueur) {
         Texture dracaufeu;
         Texture tortank;
+
+        // Si aucun des Mewtwo n'a été battu :
         if (arene.getMewtwo(1) != null && arene.getMewtwo(2) != null) {
+            // Affichage des bannières :
             if (joueur == 1) {
                 dracaufeu = new Texture("assets/arene/dracaufeu.png", new Point(0, 0));
                 fenetre.ajouter(dracaufeu);
@@ -60,7 +65,9 @@ public class MainGraphique {
                 tortank = new Texture("assets/arene/tortank.png", new Point(540, 0));
                 fenetre.ajouter(tortank);
             }
+        // Si un des Mewtwo a été battu :
         } else {
+            // Affichage des bannières du joueur victorieux :
             if (arene.getMewtwo(1) == null) {
                 tortank = new Texture("assets/arene/tortank.png", new Point(0, 0));
                 fenetre.ajouter(tortank);
@@ -74,6 +81,7 @@ public class MainGraphique {
             }
         }
 
+        // Création de l'échiquier :
         for (int ligne = 0; ligne < TAILLE_ECHIQUIER; ligne++) {
             for (int colonne = 0; colonne < TAILLE_ECHIQUIER; colonne++) {
                 if ((ligne + colonne) % 2 == 1) {
@@ -115,6 +123,7 @@ public class MainGraphique {
      * @param arene
      */
     public static void pokemon(Fenetre fenetre, Plateau arene) {
+        // Nettoie l'arène des Pokémon battus :
         arene.nettoyer();
 
         // Pokémon du joueur 1 :
@@ -157,16 +166,19 @@ public class MainGraphique {
     }
 
     /**
-     * Affiche l'écran
+     * Affiche l'écran de fin.
      * @param fenetre
      * @param arene
      */
     public static void fin(Fenetre fenetre, Plateau arene) {
         Rectangle boite;
         Texte texte;
+
+        // Si le joueur a perdu :
         if (arene.getMewtwo(1) == null) {
             boite = new Rectangle(Couleur.BLEU, new Point(0, 0), 240, 180, true);
             texte = new Texte(Couleur.BLANC, new String("PERDU !"), chargerPolice(20), new Point( (TAILLE_ECRAN_X / 2), (TAILLE_ECRAN_Y / 2)));
+        // Si le joueur est vainqueur :
         } else {
             boite = new Rectangle(Couleur.ROUGE, new Point(0, 0), 240, 180, true);
             texte = new Texte(Couleur.BLANC, new String("VICTOIRE !"), chargerPolice(20), new Point( (TAILLE_ECRAN_X / 2), (TAILLE_ECRAN_Y / 2)));
@@ -177,38 +189,51 @@ public class MainGraphique {
     }
 
     /**
-     * Affiche les déplacements possibles.
+     * Affiche les déplacements possibles via des flèches directionnelles.
      * @param fenetre
      * @param deplacements
      * @param position
      */
     public static void afficherDeplacements(Fenetre fenetre, ArrayList<Position> deplacements, Position position) {
+        // Pour les déplacements possibles :
         for (Position possibilites : deplacements) {
+            // Compare la position de la case de déplacement par rapport à la position où le Pokémon se situe :
             int x = Integer.compare(possibilites.getX(), position.getX());
             int y = Integer.compare(possibilites.getY(), position.getY());
-    
+
+            /*
+            Choix de la direction.
+            Explication -> les fichiers ont des noms composés spécifiques (haut, haut_gauche/droite, bas, bas_gauche/droite).
+            */
             String direction = "";
-    
+
             if (y < 0)
                 direction += "bas";
             if (y > 0)
                 direction += "haut";
             if (x < 0) {
+                // Si la case se situe à gauche :
                 if (direction.isEmpty())
                     direction += "gauche";
+                // Sinon, la case se situe dans l'angle gauche.
                 else
                     direction += "_gauche";
             }
             if (x > 0) {
+                // Si la case se situe à droite :
                 if (direction.isEmpty())
                     direction += "droite";
+                // Sinon, la case se situe dans l'angle droit.
                 else
                     direction += "_droite";
             }
-    
+
+            // Affiche la flèche de déplacement :
             if (!direction.isEmpty()) {
                 String chemin = "assets/fleches/" + direction + ".png";
-                Point point = new Point((TAILLE_CASE * 2) + possibilites.getX() * TAILLE_CASE, possibilites.getY() * TAILLE_CASE);
+                Point point = new Point(
+                    (TAILLE_CASE * 2) + possibilites.getX() * TAILLE_CASE, 
+                    possibilites.getY() * TAILLE_CASE);
                 fenetre.ajouter(new Texture(chemin, point, TAILLE_CASE, TAILLE_CASE));
             }
         }
@@ -227,12 +252,16 @@ public class MainGraphique {
 
     public static void main(String[] args) {
         // Création de la fenêtre :
-        Fenetre fenetre = new Fenetre("Échecs Pokémon", TAILLE_ECRAN_X, TAILLE_ECRAN_Y);
+        Fenetre fenetre = new Fenetre("PokéChess (release v.01)", TAILLE_ECRAN_X, TAILLE_ECRAN_Y);
         Souris souris = fenetre.getSouris();
-        Plateau arene = new Plateau("pokemon_j1.txt", "pokemon_j2.txt");
 
-        // Création de l'écran titre :
-        fenetre.rafraichir();
+        /*
+        Mode de jeux :
+        -> Plateau par défaut.
+        -> Selon deux fichiers.
+        */
+        // Plateau arene = new Plateau();
+        Plateau arene = new Plateau("../pokemon_j1.txt", "../pokemon_j2.txt");
 
         int joueur = 1; // Joueur qui joue le coup.
         rafraichir(fenetre, arene, joueur);

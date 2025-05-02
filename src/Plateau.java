@@ -1,8 +1,10 @@
 // Plateau.java
 // David MELOCCO (TD2 / TPC)
 
+// Import de l'ensemble des Pokémon (dont Type.java et Pokemon.java).
 import pokemons.*;
 
+// Imports d'utilitaires Java.
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -337,7 +339,7 @@ public class Plateau {
     private int lireFichier(String fichier, int joueur, HashMap<String, Supplier<Pokemon>> pokedex, HashSet<String> casesOccupees) {
         int totalPV = 0;
 
-        // TODO : comprendre ce code.
+        // Lecture d'un fichier caractère par caractère :
         try (BufferedReader lire = new BufferedReader(new FileReader(fichier))) {
             String ligne;   // Récupère la ligne sous forme de chaîne de caractères.
             int numLigne = 0;   // Début à la 1re ligne du fichier.
@@ -396,8 +398,10 @@ public class Plateau {
      * @return un booléen True si la case est valide, sinon False.
      */
     private boolean caseValide(String casePlateau) {
+        // Si la chaîne dépasse les deux caractères :
         if (casePlateau.length() != 2)
             return false;
+        // Vérification de chaque caractère :
         char lettre = casePlateau.charAt(0);
         char chiffre = casePlateau.charAt(1);
         return
@@ -433,7 +437,7 @@ public class Plateau {
      * @param position
      * @return un objet de type Pokemon, sinon null.
      */
-    //TODO : à corriger.
+    // ! D'après quelques tests, ne fonctionne pas (ou peut-être ?).
     public Piece getCase(int x, int y) { return this.getCase(new Position(x, y)); }
 
     /**
@@ -441,15 +445,15 @@ public class Plateau {
      * @param position
      * @return un objet de type Pokemon, sinon null.
      */
-    //TODO : à corriger.
+    // ! D'après quelques tests, ne fonctionne pas (ou peut-être ?).
     public Piece getCase(String position) {
-        //! Vérifier en cas d'erreur.
+        //! Vérifier la validité de la case.
         return this.getCase(new Position(position));
     }
 
     /**
      * Renvoie les pièces du joueur 1.
-     * @return une liste dynamique des pokémon du joueur 1.
+     * @return une liste dynamique des Pokémon du joueur 1.
      */
     public ArrayList<Piece> getPiecesJoueur1() {
         ArrayList<Piece> pieces = new ArrayList<Piece>();
@@ -462,7 +466,7 @@ public class Plateau {
 
     /**
      * Renvoie les pièces du joueur 2.
-     * @return une liste dynamique des pokémon du joueur 2.
+     * @return une liste dynamique des Pokémon du joueur 2.
      */
     public ArrayList<Piece> getPiecesJoueur2() {
         ArrayList<Piece> pieces = new ArrayList<Piece>();
@@ -482,7 +486,7 @@ public class Plateau {
     }
 
     /**
-     * Nettoie l'échiquier des pokémon K.O.
+     * Nettoie l'échiquier des Pokémon K.O.
      */
     public void nettoyer() {
         Iterator<Piece> it = arene.iterator();

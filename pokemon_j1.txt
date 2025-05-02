@@ -1,2 +1,4 @@
-Dracolosse;E4
-Mewtwo;E3
+Pikachu;D2
+Pikachu;E2
+Pikachu;F2
+Mewtwo;E1
