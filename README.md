@@ -17,12 +17,12 @@ Ci-dessous, une liste des mécanismes implémentés pour la **release (v0.1)** :
 ### 1. Arène
 Possibilité de jouer avec un plateau **9x9** (cases allant de **```A1```** à **```I9```**) :
 * **Prédéfini :** les Pokémon sont disposés de manière équilibrée et équitable pour une partie idéale !
-![Aperçu de l'arène](assets/images/0.png)
+![Aperçu de l'arène](src/assets/images/0.png)
 * **Configurable :** configurez les deux fichiers ```pokemon_j1.txt``` et ```pokemon_j2.txt``` pour avoir vos Pokémon favoris dans l'arène.
     * Vous devez inclure des Pokémon existants, sur une case disponible et en respectant le format suivant : ```nomPokémon;case```
     * Vous devez avoir des Pokémon dont l'ensemble des PV ne dépassent pas **1500**.
     * Vous devez avoir un unique **Mewtwo** obligatoirement.
-![Exemple d'arène](assets/images/1.png)
+![Exemple d'arène](src/assets/images/1.png)
 
 🚧 **W.I.P** 🚧
     
